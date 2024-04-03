@@ -279,6 +279,91 @@ class IndexController extends IndexModel{
         redirect('?url=detail&id='.$id);
 
     }
+    // cart
+    public function addCart($id){
+
+        if(!$_SESSION['cart']){
+
+            $_SESSION['cart'][] = [
+                'id' => $id,
+                'quantity' => 1
+            ];
+
+        }else{
+
+            $check = true;
+            foreach ($_SESSION['cart'] as $key => $value) {
+                if($value['id'] == $id){
+                    $quantity = $_SESSION['cart'][$key]['quantity'];
+                    $_SESSION['cart'][$key]['quantity'] = $quantity + 1;
+                    $check = false;
+                    break;
+                }
+            }
+
+            if($check){
+                $_SESSION['cart'][] = [
+                    'id' => $id,
+                    'quantity' => 1
+                ];
+            }
+
+        }
+
+        redirect('?url=cart');
+
+    }
+
+    function downCart($id){
+
+
+        if($_SESSION['cart']){
+
+            $index = 0;
+
+            foreach ($_SESSION['cart'] as $key => $value) {
+                if($value['id'] == $id){
+                    $quantity = $_SESSION['cart'][$key]['quantity'];
+                    $_SESSION['cart'][$key]['quantity'] = $quantity - 1;
+                    $index = $key;
+                    break;
+                }
+            }
+
+            if($_SESSION['cart'][$index]['quantity'] <= 0){
+                unset($_SESSION['cart'][$index]);
+            }
+
+        }
+
+        redirect('?url=cart');
+
+    }
+
+    function cart(){
+
+
+        $cart = $this->giohang(); 
+        $categories = $this->categories();
+
+
+        layout('header');
+        layout('sidebar', 'client', compact('categories'));
+
+        view('cart', 'client', compact(['cart']));
+
+
+        layout('footer');
+
+    }
+    
+    function removeCart($key){
+
+        if($_SESSION['cart']) unset($_SESSION['cart'][$key]);
+
+        redirect('?url=cart');
+
+    }
     
     function pay(){
 

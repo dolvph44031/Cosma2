@@ -268,6 +268,51 @@ switch ($url) {
         $index->detailOrder();
 
         break;
+    // cart
+    case "add-cart":
+        if(empty($_SESSION['account'])) redirect('?url=login');
+
+        $id = $_GET['id'];
+        $index->addCart($id);
+        break;
+    case "down-cart":
+        if(empty($_SESSION['account'])) redirect('?url=login');
+        
+        $id = $_GET['id'];
+        $index->downCart($id);
+        break;
+
+    case "remove-cart":
+        if(empty($_SESSION['account'])) redirect('?url=login');
+
+        $key = $_GET['key'];
+        $index->removeCart($key);
+        break;
+
+
+    case "cart":
+        if(empty($_SESSION['account'])) redirect('?url=login');
+
+        // $id = $_GET['id'];
+        $index->cart();
+        break;
+
+    // pay
+    case "pay":
+        $index->pay();
+        break;
+
+    case "loadPay":
+        $index->loadPay();
+        break;
+
+    case "checkvnpay":
+        $index->checkvnpay();
+        break;
+    case "thank":
+        $index->thank();
+        break;
+
     default:
         echo "404";
         break;
