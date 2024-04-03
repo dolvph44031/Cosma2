@@ -90,6 +90,75 @@ switch ($url) {
         $id = $_GET['id'];
         $cate->delete($id);
         break;
+        case "user-index":
+            if(!$_SESSION['account']['permission']) redirect();
+    
+            $user->index();
+            break;
+        case "user-add":
+            if(!$_SESSION['account']['permission']) redirect();
+    
+            $user->add();
+            break;
+        case "user-add-post":
+            if(!$_SESSION['account']['permission']) redirect();
+    
+            $user->addpost();
+            break;
+    
+        case "user-edit":
+            if(!$_SESSION['account']['permission']) redirect();
+    
+            $id = $_GET['id'];
+            $user->edit($id);
+            break;
+        case "user-edit-post":
+            if(!$_SESSION['account']['permission']) redirect();
+    
+            $user->editpost();
+            break;
+        case "user-delete":
+            if(!$_SESSION['account']['permission']) redirect();
+    
+            $id = $_GET['id'];
+            $user->delete($id);
+            break;
+    
+        // curd products
+    
+        case "product-index":
+            if(!$_SESSION['account']['permission']) redirect();
+    
+            $product->index();
+            break;
+        case "product-add":
+            if(!$_SESSION['account']['permission']) redirect();
+    
+            $product->add();
+            break;
+        case "product-add-post":
+            if(!$_SESSION['account']['permission']) redirect();
+    
+            $product->addpost();
+            break;
+    
+        case "product-edit":
+            if(!$_SESSION['account']['permission']) redirect();
+    
+            $id = $_GET['id'];
+            $product->edit($id);
+            break;
+        case "product-edit-post":
+            if(!$_SESSION['account']['permission']) redirect();
+    
+            $product->editpost();
+            break;
+        case "product-delete":
+            if(!$_SESSION['account']['permission']) redirect();
+    
+            $id = $_GET['id'];
+            $product->delete($id);
+            break;
 
 
 }

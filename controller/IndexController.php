@@ -257,6 +257,98 @@ class IndexController extends IndexModel{
         setFlashData('msg', 'Đã đổi thông tin thành công');     
         redirect('?url=information');
     }
+    
+    function pay(){
+
+        $carts = $this->giohang(); 
+
+        if(empty($carts)){
+            redirect('?url=cart');
+        }
+    
+        layout('header');
+
+
+        view('pay', 'client', compact(['carts']));
+
+
+        layout('footer');
+
+
+
+    }
+
+    function loadPay(){
+
+        $validate = true;
+
+        if(empty($_POST['email']) || empty($_POST['phone']) || empty($_POST['address']) || empty($_POST['type'])){
+            setFlashData('msg', "Vui lòng điền đủ các trường Email, Số điện thoại, Địa chỉ, Phương thức thanh toán");
+            $validate = false;
+        }else{
+            if(!preg_match('~^0[0-9]{9}$~', $_POST['phone'])){
+                setFlashData('msg', "Số điện thoại sai định dạng");
+                $validate = false;
+            }
+        }
+
+        if(!$validate) redirect('?url=pay');
+
+        $model = new static;
+
+        $order = [
+            'user_id' => $_SESSION['account']['id'],
+            'code' => "#" . rand(0, 999),
+            'fullname' => $_POST['name'],
+            'email' => $_POST['email'],
+            'phone' => $_POST['phone'],
+            'address' => $_POST['address'],
+            'type' => $_POST['type'],
+            'total' => $_POST['total'],
+            'created_at' => date("Y-m-d H:i:s")
+        ];
+
+        setFlashData('order', $order);
+
+        if($_POST['type'] == 1){
+
+            CURDModel::Create('orders', $order);
+
+            $order_id = CURDModel::Query("SELECT id FROM orders ORDER BY id DESC LIMIT 1", false)['id'];
+
+            $carts = $this->giohang(); 
+
+            foreach ($carts as $key => $cr) {
+                
+                CURDModel::Create('order_carts', [
+                    'order_id' => $order_id,
+                    'pro_id' => $cr['id'],
+                    'quantity' => $cr['quantity']
+                ]);
+
+            }
+
+            removeSession('cart');
+
+            setFlashData('thank', true);
+
+            redirect("?url=thank");
+
+        }else if($_POST['type'] == 2){
+
+            $model->checkout($_POST['total']);
+
+        }
+
+    }
+
+    function thank(){
+
+        if(!getFlashData('thank')) redirect('?url=orders'); 
+
+        echo '<img src="'._PATH_IMAGE."/banner.jpg".'" class="" width="100%"/>';
+
+    }
 
 
 
