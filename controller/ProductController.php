@@ -363,5 +363,38 @@ class ProductController extends ProductModel{
         layout('footer', 'admin');
 
     }
+    function detailOrder(){
+
+        $id = $_GET['id'];
+
+        if(empty($id)) redirect('?url=order-index');
+
+        $detailOrders = CURDModel::Query("SELECT do.*, p.image, p.name, p.price FROM order_carts AS do INNER JOIN products AS p ON do.pro_id=p.id WHERE do.order_id='$id'");
+
+        if(empty($detailOrders)) redirect('?url=order-index');
+
+        layout('header', 'admin');
+        layout('sidebar', 'admin');
+
+        view('detail-order', 'admin', compact('detailOrders'));
+
+        layout('footer', 'admin');
+
+    }
+    
+    function listOrder(){
+
+        if(empty($_SESSION['account']['permission'])) redirect();
+
+        $orders = CURDModel::Query("SELECT * FROM orders");
+
+        layout('header', 'admin');
+        layout('sidebar', 'admin');
+
+        view('index-order', 'admin', compact('orders'));
+
+        layout('footer', 'admin');
+
+    }
     
 }

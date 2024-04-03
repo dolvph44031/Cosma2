@@ -529,7 +529,50 @@ class IndexController extends IndexModel{
     
 
     }
+    function orders(){
 
+        $categories = $this->categories();
+    
+        $user_id = $_SESSION['account']['id'];
+
+        $orders = CURDModel::Query("SELECT * FROM orders WHERE user_id='$user_id'");
+
+        layout('header');
+        layout('sidebar', 'client', compact('categories'));
+
+        layout('menuInfor', 'client', compact(['categories']));
+
+        view('orders', 'client', compact(['categories', 'orders']));
+
+        layout('footer');
+
+
+    }
+
+
+    function detailOrder(){
+
+        $categories = $this->categories();
+    
+        $id = $_GET['id'];
+
+        if(empty($id)) redirect('?url=orders');
+
+        $detailOrders = CURDModel::Query("SELECT do.*, p.image, p.name, p.price FROM order_carts AS do INNER JOIN products AS p ON do.pro_id=p.id WHERE do.order_id='$id'");
+
+        if(empty($detailOrders)) redirect('?url=orders');
+
+        layout('header');
+        layout('sidebar', 'client', compact('categories'));
+
+        layout('menuInfor', 'client', compact(['categories']));
+
+        view('detail-order', 'client', compact(['detailOrders']));
+
+        layout('footer');
+
+
+    }
 
 }
 

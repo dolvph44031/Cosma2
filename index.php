@@ -233,6 +233,41 @@ switch ($url) {
     case "informationPost":
         $index->informationPost();
         break;
+
+        // order
+    case "order-index":
+
+        $product->listOrder();
+
+        break;
+
+    case "detail-order":
+
+        $product->detailOrder();
+
+        break;
+
+    case "order-status":
+        $product->changeStatus();
+        break;
+
+    case "changeThanhToan":
+        $product->changeThanhToan();
+        break;
+
+    case "statistical":
+        $product->statistical();
+        break;
+        
+    case "orders":
+        $index->orders();
+        break;
+
+    case "detailOrder":
+
+        $index->detailOrder();
+
+        break;
     default:
         echo "404";
         break;
