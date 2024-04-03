@@ -179,5 +179,64 @@ class ProductController extends ProductModel{
         redirect('?url=product-index');
 
     }
+    function comments(){
+
+        if(empty($_SESSION['account']['permission'])) redirect();
+
+        $comments = CURDModel::Query("SELECT c.*, u.fullname, p.name FROM comments AS c INNER JOIN users AS u ON c.user_id = u.id INNER JOIN products AS p ON c.pro_id=p.id");
+
+        layout('header', 'admin');
+        layout('sidebar', 'admin');
+
+        view('index-comment', 'admin', compact('comments'));
+
+        layout('footer', 'admin');
+
+    }
+
+    function removeComment(){
+
+        if(empty($_SESSION['account']['permission'])) redirect();
+
+        $id = $_GET['id'];
+
+        $comment = CURDModel::Query("SELECT * FROM comments WHERE id='$id'");
+
+        if(empty($comment)) redirect('?url=comment-index');
+
+        CURDModel::Delete('comments', "id='$id'");
+
+        redirect('?url=comment-index');
+
+    }
+
+    function activeComment(){
+
+        if(empty($_SESSION['account']['permission'])) redirect();
+
+        $id = $_GET['id'];
+
+        $comment = CURDModel::Query("SELECT * FROM comments WHERE id='$id'", false);
+
+        if(empty($comment)) redirect('?url=comment-index');
+
+        $status = 1;
+
+        if($comment['status'] == 1){
+            $status = 0;
+        }else{
+            $status = 1;
+        }
+
+        $data = [
+            'status' => $status
+        ];
+
+        CURDModel::Update('comments', $data, "id='$id'");
+
+
+        redirect('?url=comment-index');
+
+    }
     
 }

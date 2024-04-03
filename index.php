@@ -159,6 +159,18 @@ switch ($url) {
             $id = $_GET['id'];
             $product->delete($id);
             break;
+        // comment 
+        case "comment-index":
+
+            $product->comments();
+    
+            break;
+    
+        case "removeComment":
+    
+            $product->removeComment();
+        
+            break;
 
 
 }

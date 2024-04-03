@@ -257,6 +257,28 @@ class IndexController extends IndexModel{
         setFlashData('msg', 'Đã đổi thông tin thành công');     
         redirect('?url=information');
     }
+    function createComment(){
+
+        $id = $_POST['id'];
+
+        if(empty($_SESSION['account'])){
+            setFlashData('msg', 'Vui lòng đăng nhập để bình luận');
+            redirect('?url=detail&id='.$id);
+        }
+
+        $data = [
+            'comment' => $_POST['comment'],
+            'user_id' => $_SESSION['account']['id'],
+            'pro_id' => $id,
+            'created_at' => date("Y-m-d H:i:s")
+        ];
+
+        CURDModel::Create('comments', $data);
+        
+        setFlashData('msg', 'Bạn đã bình luận');
+        redirect('?url=detail&id='.$id);
+
+    }
     
     function pay(){
 
