@@ -238,5 +238,130 @@ class ProductController extends ProductModel{
         redirect('?url=comment-index');
 
     }
+    function changeStatus(){
+
+        if(empty($_SESSION['account']['permission'])) redirect();
+
+        $id = $_GET['id'];
+
+        $order = CURDModel::Query("SELECT * FROM orders WHERE id='$id'", false);
+
+        $status = ++$order['status'];
+
+        if($status > 4){
+            $status = 0;
+        }
+
+        $data = [
+            'status' => $status
+        ];
+
+        CURDModel::Update('orders', $data, "id='$id'");
+
+        redirect("?url=order-index");
+
+    }
+
+    function changeThanhToan(){
+
+            if(empty($_SESSION['account']['permission'])) redirect();
+
+        $id = $_GET['id'];
+
+        $order = CURDModel::Query("SELECT * FROM orders WHERE id='$id'", false);
+
+        $thanhtoan = $order['thanhtoan'];
+
+        if($thanhtoan == 1){
+            $thanhtoan = 0;
+        }else{
+            $thanhtoan = 1;
+        }
+
+        $data = [
+            'thanhtoan' => $thanhtoan
+        ];
+
+        CURDModel::Update('orders', $data, "id='$id'");
+
+        redirect("?url=order-index");
+
+    }
+
+
+    function statistical(){
+
+            if(empty($_SESSION['account']['permission'])) redirect();
+
+        $va = 1;
+
+        $categories = CURDModel::Query("SELECT * FROM categories");
+        $products = CURDModel::Query("SELECT * FROM products");
+        $users = CURDModel::Query("SELECT * FROM users");
+        $orderDetail = CURDModel::Query("SELECT * FROM order_carts");
+        
+        $proCate = [];
+
+        $proBuy = [];
+
+        $proPrice = [];
+
+        foreach ($categories as $key => $value) {
+            $id = $value['id'];
+            $proCate[] = [
+                'cate' => $value,
+                'count' => CURDModel::Query("SELECT COUNT(*) FROM products WHERE cate_id='$id'", false)[0]
+            ];
+        }
+
+        foreach ($products as $key => $value) {
+
+            $pro_id = $value['id'];
+ 
+            $carts = CURDModel::Query("SELECT * FROM order_carts WHERE pro_id='$pro_id'");
+
+            $count = 0;
+
+            foreach ($carts as $key => $a) {
+                $count += (int)($a['quantity']);
+            }
+            
+            $proBuy[] = [
+                'product' => $value,
+                'count' => $count
+            ];
+        }
+
+        foreach ($products as $key => $value) {
+            
+            $pro_id = $value['id'];
+ 
+            $carts = CURDModel::Query("SELECT * FROM order_carts WHERE pro_id='$pro_id'");
+
+            $price = 0;
+
+            foreach ($carts as $key => $a) {
+                $price += $a['quantity'] * $value['price'];
+            }
+
+            $proPrice[] = [
+                'product' => $value,
+                'price' => $price
+            ];
+
+
+        }
+
+        
+
+
+        layout('header', 'admin');
+        layout('sidebar', 'admin');
+
+        view('statistical', 'admin', compact('va', 'proCate', 'proBuy', 'proPrice'));
+
+        layout('footer', 'admin');
+
+    }
     
 }
